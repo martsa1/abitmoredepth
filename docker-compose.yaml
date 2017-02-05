@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  nginx:
+    build:
+      context: .
+    # volumes:
+    #   - ./static:/usr/share/nginx/static
+    #   - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"
