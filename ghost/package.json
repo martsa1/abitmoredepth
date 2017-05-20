@@ -1,0 +1,12 @@
+{
+  "name": "ghost",
+  "version": "1.0.0",
+  "description": "My blog setup",
+  "main": "config.js",
+  "author": "Sam Martin",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^3.15.0",
+    "eslint-plugin-react": "^6.9.0"
+  }
+}
