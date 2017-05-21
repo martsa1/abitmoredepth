@@ -11,7 +11,7 @@ config = {
     // When running Ghost in the wild, use the production environment.
     // Configure your URL and mail settings here
     production: {
-        url: 'http://abitmoredepth.com',
+        url: 'https://abitmoredepth.com',
         mail: {},
         database: {
             client: 'mysql',
@@ -33,6 +33,8 @@ config = {
         paths: {
             contentPath: path.join(process.env.GHOST_CONTENT, '/')
         },
+
+        forceAdminSSL: true,
 
         server: {
             host: '0.0.0.0',
