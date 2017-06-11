@@ -46,7 +46,7 @@ config = {
     development: {
         // The url to use when providing links to the site, E.g. in RSS and email.
         // Change this to your Ghost blog's published URL.
-        url: 'http://localhost:2368',
+        url: 'http://localhost',
 
         // Example refferer policy
         // Visit https://www.w3.org/TR/referrer-policy/ for instructions
@@ -71,12 +71,22 @@ config = {
         // #### Database
         // Ghost supports sqlite3 (default), MySQL & PostgreSQL
         database: {
-            client: 'sqlite3',
+            client: 'mysql',
             connection: {
-                filename: path.join(process.env.GHOST_CONTENT, '/data/ghost-dev.db')
+                host: 'mariadb',
+                user: 'ghostly',
+                password: 'ahnonotanotheroneofthosereallybastardlongpasswords..?',
+                database: 'ghost',
+                charset: 'utf8'
+            },
+            pool: {
+                min: 2,
+                max: 10
             },
             debug: false
         },
+        forceAdminSSL: false,
+
         // #### Server
         // Can be host & port (default), or socket
         server: {
