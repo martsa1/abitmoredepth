@@ -37,8 +37,9 @@ services:
     volumes:
       - ghost_source_demo:/usr/src/ghost
       - ghost_content_demo:/var/lib/ghost
-      - ./ghost/dev_config.js:/var/lib/ghost/config.js
-      - ../boo_theme:/var/lib/ghost/themes/boo
+      - ./ghost/config.js:/var/lib/ghost/config.js
+      - ../ABitMoreDepthTheme:/var/lib/ghost/themes/abmd
+
     ports:
       - "2368:2368"
     command: [
