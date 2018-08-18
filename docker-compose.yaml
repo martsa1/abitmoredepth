@@ -102,7 +102,7 @@ services:
   traefik:
     image: traefik
     build:
-      context: containers/traefik
+      context: traefik/
       dockerfile: Dockerfile
     ports:
       - "443:443"
@@ -112,9 +112,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./traefik/traefik.toml:/traefik.toml
       - ./traefik/certs:/etc/traefik/acme/
-      - type: bind
-        source: ./containers/traefik/certs
-        target: /certs
     deploy:
       mode: replicated
       replicas: 1
