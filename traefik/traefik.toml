@@ -1,0 +1,57 @@
+debug = true
+
+sendAnonymousUsage = true
+
+logLevel = "debug"
+# logLevel = "info"
+defaultEntryPoints = ["https", "http"]
+
+[entryPoints]
+  [entryPoints.http]
+  address = ":80"
+  [entryPoints.https]
+  address = ":443"
+    [entryPoints.https.tls]
+    minVersion = "VersionTLS12"
+
+[retry]
+
+[docker]
+endpoint = "unix://var/run/docker.sock"
+domain = "localhost"
+watch = true
+exposedByDefault = false
+swarmMode = true
+
+[api]
+entryPoint = "traefik"
+dashboard = true
+
+[acme]
+# Log stuff
+acmeLogging = true
+# Used for registration of SSL Certificates
+email = "sam@abitmoredepth.com"
+
+# Where we should store all the data
+storage = "/etc/traefik/acme/acme.json"
+
+# What entrypoint in Traefik should the certificates be applied to?
+entryPoint = "https"
+[acme.httpChallenge]
+  entryPoint = "http"
+
+# For now, lets play against the letsencrypt staging server, so we don't get
+# ourselves screwed by rate limiting on their end.
+caServer = "https://acme-staging-v02.api.letsencrypt.org/directory"
+
+[[acme.domains]]
+  main = "abitmoredepth.com"
+  sans = [
+    "traefik.abitmoredepth.com",
+    "manage.abitmoredepth.com",
+    "www.abitmoredepth.com",
+    "jess.abitmoredepth.com",
+    "sam.abitmoredepth.com"
+  ]
+

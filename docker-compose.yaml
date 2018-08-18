@@ -1,36 +1,39 @@
+---
 version: '3.2'
 
 services:
-  nginx:
-    image: nginx:latest
-    volumes:
-      - ./nginx/config:/etc/nginx/
-      - ./nginx/certs:/usr/share/certs
-      - ./nginx/html:/var/www
-      - ./jess-portfolio:/usr/share/nginx/jess-portfolio
-    ports:
-      - "80:80"
-      - "443:443"
-    deploy:
-      mode: replicated
-      replicas: 1
-      restart_policy:
-        condition: any
+  # nginx:
+  #   image: nginx:latest
+  #   volumes:
+  #     - ./nginx/config:/etc/nginx/
+  #     - ./nginx/certs:/usr/share/certs
+  #     - ./nginx/html:/var/www
+  #     - ./jess-portfolio:/usr/share/nginx/jess-portfolio
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   deploy:
+  #     mode: replicated
+  #     replicas: 1
+  #     restart_policy:
+  #       condition: any
 
-  certbot:
-    image: certbot/certbot:latest
-    volumes:
-      - ./nginx/certs:/etc/letsencrypt
-      - ./nginx/html:/var/www
-    command: [ "renew" ]
-    deploy:
-      mode: replicated
-      replicas: 1
-      restart_policy:
-        condition: any
-        delay: 86400s
-        window: 120s
-  # docker run -ti --entrypoint=sh -v ~/abitmoredepth/nginx/certs/:/etc/letsencrypt/ -v ~/abitmoredepth/nginx/html:/var/www certbot/certbot:latest
+  # certbot:
+  #   image: certbot/certbot:latest
+  #   volumes:
+  #     - ./nginx/certs:/etc/letsencrypt
+  #     - ./nginx/html:/var/www
+  #   command: ["renew"]
+  #   deploy:
+  #     mode: replicated
+  #     replicas: 1
+  #     restart_policy:
+  #       condition: any
+  #       delay: 86400s
+  #       window: 120s
+  #       # docker run -ti --entrypoint=sh -v
+  #       # ~/abitmoredepth/nginx/certs/:/etc/letsencrypt/ -v
+  #       # ~/abitmoredepth/nginx/html:/var/www certbot/certbot:latest
 
 
   ghost:
@@ -39,18 +42,25 @@ services:
       - ghost_source:/usr/src/ghost
       - ghost_content:/var/lib/ghost
       - ./ghost/config.js:/var/lib/ghost/config.js
-    ports:
-      - "2368:2368"
+    # ports:
+    #   - "2368:2368"
     command: [
       "npm",
       "start",
       "--production"
-      ]
+    ]
     deploy:
       mode: replicated
       replicas: 1
       restart_policy:
         condition: any
+      labels:
+        - "traefik.backend=ghost"
+        - "traefik.enable=true"
+        - "traefik.frontend.entryPoints=http,https"
+        - "traefik.frontend.redirect.entryPoint=https"
+        - "traefik.frontend.rule=Host:abitmoredepth.com,www.abitmoredepth.com"
+        - "traefik.port=2368"
 
   mariadb:
     image: mariadb:latest
@@ -67,9 +77,62 @@ services:
       restart_policy:
         condition: any
 
+  portainer:
+    image: portainer/portainer
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+      - type: volume
+        source: portainer-data
+        target: /data
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: any
+      labels:
+        - "traefik.backend=portainer"
+        - "traefik.enable=true"
+        - "traefik.frontend.entryPoints=http,https"
+        - "traefik.frontend.redirect.entryPoint=https"
+        - "traefik.frontend.rule=Host:manage.abitmoredepth.com"
+        - "traefik.port=9000"
+
+  traefik:
+    image: traefik
+    build:
+      context: containers/traefik
+      dockerfile: Dockerfile
+    ports:
+      - "443:443"
+      - "8080:8080"
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik/traefik.toml:/traefik.toml
+      - ./traefik/certs:/etc/traefik/acme/
+      - type: bind
+        source: ./containers/traefik/certs
+        target: /certs
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: any
+      labels:
+        - "traefik.backend=traefik"
+        - "traefik.enable=true"
+        - "traefik.frontend.entryPoints=http,https"
+        - "traefik.frontend.redirect.entryPoint=https"
+        - "traefik.frontend.rule=Host:traefik.abitmoredepth.com"
+        - "traefik.port=8080"
+
 volumes:
-  maria_data:
+  ghost_content:
 
   ghost_source:
 
-  ghost_content:
+  maria_data:
+
+  portainer-data:
