@@ -1,0 +1,36 @@
+{
+  "url": "https://abitmoredepth.com",
+  "server": {
+    "port": 2368,
+    "host": "0.0.0.0"
+  },
+  "database": {
+    "client": "mysql",
+      "connection": {
+        "host": "mariadb",
+        "user": "ghostly",
+        "password": "ahnonotanotheroneofthosereallybastardlongpasswords..?",
+        "database": "ghost",
+        "charset": "utf8"
+      },
+      "pool": {
+        "min": 2,
+        "max": 10
+      },
+      "debug": false
+  },
+  "mail": {
+    "transport": "Direct"
+  },
+  "logging": {
+    "transports": [
+      "file",
+      "stdout"
+    ]
+  },
+  "process": "systemd",
+  "paths": {
+    "contentPath": "/var/lib/ghost/content"
+  }
+}
+
