@@ -2,8 +2,8 @@ debug = true
 
 sendAnonymousUsage = true
 
-logLevel = "debug"
-# logLevel = "info"
+#logLevel = "debug"
+ logLevel = "info"
 defaultEntryPoints = ["https", "http"]
 
 [entryPoints]
@@ -43,7 +43,7 @@ entryPoint = "https"
 
 # For now, lets play against the letsencrypt staging server, so we don't get
 # ourselves screwed by rate limiting on their end.
-caServer = "https://acme-staging-v02.api.letsencrypt.org/directory"
+# caServer = "https://acme-staging-v02.api.letsencrypt.org/directory"
 
 [[acme.domains]]
   main = "abitmoredepth.com"
