@@ -26,6 +26,9 @@ services:
       - "JAVA_OPTS=-Djenkins.install.runSetupWizard=false"
     networks:
       - main
+    secrets:
+      - ci-user
+      - ci-password
     deploy:
       mode: replicated
       replicas: 1
@@ -198,3 +201,9 @@ networks:
   main:
     driver: overlay
     attachable: true
+
+secrets:
+  ci-user:
+    file: ./jenkins/master/secret-user
+  ci-password:
+    file: ./jenkins/master/secret-password

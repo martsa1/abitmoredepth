@@ -14,8 +14,8 @@ HudsonPrivateSecurityRealm hudsonRealm = new HudsonPrivateSecurityRealm(false) /
 jenkins.setSecurityRealm(hudsonRealm)
 
 // Setup jenkins default user - uses docker secrets
-def userName = new File('/var/lib/usr').text
-def userPass = new File('/var/lib/passwd').text
+def userName = new File('/run/secrets/ci-user').text.trim()
+def userPass = new File('/run/secrets/ci-password').text.trim()
 jenkins.securityRealm.createAccount(userName, userPass)
 
 // Allow any logged in user to do whatever (might change this in future).
