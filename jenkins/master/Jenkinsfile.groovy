@@ -1,7 +1,7 @@
 pipeline {
   agent {
     docker {
-      image 'registry.abitmoredepth.com/ci-agent'
+      image 'ci-agent'
       label 'docker'
     }
   }
