@@ -2,6 +2,43 @@
 version: '3.2'
 
 services:
+  ci:
+    build:
+      context: jenkins/master
+      dockerfile: Dockerfile
+    image: registry.abitmoredepth.com/ci-master:latest
+    user: root:users
+    volumes:
+      - type: bind
+        source: /etc/timezone
+        target: /etc/timezone:ro
+      - type: bind
+        source: /usr/share/zoneinfo/${TZ:-Europe/London}
+        target: /usr/share/zoneinfo/${TZ:-Europe/London}
+      - type: bind
+        source: /usr/share/zoneinfo/${TZ:-Europe/London}
+        target: /etc/localtime
+      - "/var/run/docker.sock:/var/run/docker.sock:z"
+      - "/ci/jobs:/var/jenkins_home/jobs"
+      - "/ci/workspace:/var/jenkins_home/workspace"
+    environment:
+      - TZ=${TZ:-Europe/London}
+      - "JAVA_OPTS=-Djenkins.install.runSetupWizard=false"
+    networks:
+      - abitmoredepth
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: any
+      labels:
+        - "traefik.backend=jenkins"
+        - "traefik.enable=true"
+        - "traefik.frontend.entryPoints=http,https"
+        - "traefik.frontend.redirect.entryPoint=https"
+        - "traefik.frontend.rule=Host:ci.abitmoredepth.com"
+        - "traefik.port=8080"
+
   ghost:
     image: ghost:latest
     volumes:
