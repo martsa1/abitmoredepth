@@ -1,9 +1,9 @@
-debug = true
+#debug = true
 
 sendAnonymousUsage = true
 
-#logLevel = "debug"
- logLevel = "info"
+# logLevel = "debug"
+logLevel = "info"
 defaultEntryPoints = ["https", "http"]
 
 [entryPoints]
@@ -48,10 +48,13 @@ entryPoint = "https"
 [[acme.domains]]
   main = "abitmoredepth.com"
   sans = [
-    "traefik.abitmoredepth.com",
-    "manage.abitmoredepth.com",
-    "www.abitmoredepth.com",
+    "ci.abitmoredepth.com",
     "jess.abitmoredepth.com",
-    "sam.abitmoredepth.com"
+    "manage.abitmoredepth.com",
+    "reg-ui.abitmoredepth.com",
+    "registry.abitmoredepth.com",
+    "sam.abitmoredepth.com",
+    "traefik.abitmoredepth.com",
+    "www.abitmoredepth.com"
   ]
 
