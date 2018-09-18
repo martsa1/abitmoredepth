@@ -12,6 +12,11 @@ def jenkins_image_builders = [
     'jobDescription': 'Build and Publish the Jenkins docker image to registry.abitmoredepth.com',
     'jenkinsFilePath': 'jenkins/master/Jenkinsfile.groovy'
   ],
+  [
+    'jobName': 'traefik',
+    'jobDescription': 'Docker aware http proxy',
+    'jenkinsFilePath': 'traefik/Jenkinsfile.groovy'
+  ],
 ]
 
 for (image in jenkins_image_builders) {
