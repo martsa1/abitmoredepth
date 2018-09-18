@@ -34,8 +34,12 @@ services:
       replicas: 1
       restart_policy:
         condition: any
+      placement:
+        constraints:
+          - node.role == manager
       labels:
         - "traefik.backend=jenkins"
+        - "traefik.docker.network=abitmoredepth_main"
         - "traefik.enable=true"
         - "traefik.frontend.entryPoints=http,https"
         - "traefik.frontend.redirect.entryPoint=https"
@@ -60,8 +64,12 @@ services:
       replicas: 1
       restart_policy:
         condition: any
+      placement:
+        constraints:
+          - node.role == manager
       labels:
         - "traefik.backend=ghost"
+        - "traefik.docker.network=abitmoredepth_main"
         - "traefik.enable=true"
         - "traefik.frontend.entryPoints=http,https"
         - "traefik.frontend.redirect.entryPoint=https"
@@ -84,6 +92,9 @@ services:
       replicas: 1
       restart_policy:
         condition: any
+      placement:
+        constraints:
+          - node.role == manager
 
   portainer:
     image: portainer/portainer
@@ -96,18 +107,44 @@ services:
         target: /data
     networks:
       - main
+      - portainer_agent
+    command: -H tcp://tasks.agent:9001 --tlsskipverify
     deploy:
       mode: replicated
       replicas: 1
       restart_policy:
         condition: any
+      placement:
+        constraints:
+          - node.role == manager
       labels:
         - "traefik.backend=portainer"
+        - "traefik.docker.network=abitmoredepth_main"
         - "traefik.enable=true"
         - "traefik.frontend.entryPoints=http,https"
         - "traefik.frontend.redirect.entryPoint=https"
         - "traefik.frontend.rule=Host:manage.abitmoredepth.com"
         - "traefik.port=9000"
+
+  agent:
+    image: portainer/agent
+    environment:
+      AGENT_CLUSTER_ADDR: tasks.agent
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
+    ports:
+      - target: 9001
+        published: 9001
+        protocol: tcp
+        mode: host
+    networks:
+      - portainer_agent
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.platform.os == linux
 
   registry:
     image: registry:2
@@ -125,8 +162,12 @@ services:
       replicas: 1
       restart_policy:
         condition: any
+      placement:
+        constraints:
+          - node.role == manager
       labels:
         - "traefik.backend=registry"
+        - "traefik.docker.network=abitmoredepth_main"
         - "traefik.enable=true"
         - "traefik.frontend.entryPoints=http,https"
         - "traefik.frontend.passHostHeader=true"
@@ -152,6 +193,7 @@ services:
         condition: any
       labels:
         - "traefik.backend=docker-registry-ui"
+        - "traefik.docker.network=abitmoredepth_main"
         - "traefik.enable=true"
         - "traefik.frontend.entryPoints=http,https"
         - "traefik.frontend.redirect.entryPoint=https"
@@ -178,8 +220,12 @@ services:
       replicas: 1
       restart_policy:
         condition: any
+      placement:
+        constraints:
+          - node.role == manager
       labels:
         - "traefik.backend=traefik"
+        - "traefik.docker.network=abitmoredepth_main"
         - "traefik.enable=true"
         - "traefik.frontend.entryPoints=http,https"
         - "traefik.frontend.redirect.entryPoint=https"
@@ -198,6 +244,10 @@ volumes:
   reg-data:
 
 networks:
+  portainer_agent:
+    driver: overlay
+    attachable: true
+
   main:
     driver: overlay
     attachable: true
