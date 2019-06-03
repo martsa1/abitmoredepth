@@ -62,4 +62,5 @@ extra-columns
 git
 job-dsl
 progress-bar-column-plugin
+simple-theme-plugin
 workflow-aggregator
