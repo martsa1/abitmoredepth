@@ -6,8 +6,8 @@ USER root
 ENV JENKINS_HOME=/var/jenkins_home
 
 #RUN apt-get update && apt-get install -y python-pip git gcc python-dev
-RUN apt-get update && apt-get install -y git gcc python-dev curl
-RUN curl https://bootstrap.pypa.io/get-pip.py | python
+RUN apt-get update && apt-get install -y git gcc python3-dev curl
+RUN curl https://bootstrap.pypa.io/get-pip.py | python3
 
 RUN pip install --upgrade pip && pip install PyYaml click ruamel.yaml
 
