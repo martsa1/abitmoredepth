@@ -24,7 +24,9 @@ pipeline {
       steps {
         script {
           dir('jenkins/master') {
-            docker.build('registry.abitmoredepth.com/ci-master', '--pull --no-cache .')
+            retry(3) {
+              docker.build('registry.abitmoredepth.com/ci-master', '--pull --no-cache .')
+            }
           }
         }
       }
@@ -34,8 +36,10 @@ pipeline {
       steps {
         script {
           dir('jenkins/agent') {
-            docker.withRegistry('https://registry.abitmoredepth.com') {
-              docker.image('registry.abitmoredepth.com/ci-master:latest').push('latest')
+            retry(3) {
+              docker.withRegistry('https://registry.abitmoredepth.com') {
+                docker.image('registry.abitmoredepth.com/ci-master:latest').push('latest')
+              }
             }
           }
         }
