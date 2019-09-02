@@ -19,8 +19,8 @@ services:
         source: /usr/share/zoneinfo/${TZ:-Europe/London}
         target: /etc/localtime
       - "/var/run/docker.sock:/var/run/docker.sock:z"
-      - "/ci/jobs:/var/jenkins_home/jobs"
-      - "/ci/workspace:/var/jenkins_home/workspace"
+      - "./ci/jobs:/var/jenkins_home/jobs"
+      - "./ci/workspace:/var/jenkins_home/workspace"
     environment:
       - TZ=${TZ:-Europe/London}
       - "JAVA_OPTS=-Djenkins.install.runSetupWizard=false"
