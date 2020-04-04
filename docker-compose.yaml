@@ -6,7 +6,7 @@ services:
     build:
       context: jenkins/master
       dockerfile: Dockerfile
-    image: registry.abitmoredepth.com/ci-master:latest
+    image: 114151591996.dkr.ecr.eu-west-1.amazonaws.com/abmd/ci-master:latest
     user: root:users
     volumes:
       - type: bind
@@ -28,16 +28,16 @@ services:
       - abitmoredepth
     deploy:
       mode: replicated
-      replicas: 1
+      replicas: 0
       restart_policy:
         condition: any
       labels:
-        - "traefik.backend=jenkins"
         - "traefik.enable=true"
-        - "traefik.frontend.entryPoints=http,https"
-        - "traefik.frontend.redirect.entryPoint=https"
-        - "traefik.frontend.rule=Host:ci.abitmoredepth.com"
-        - "traefik.port=8080"
+        - "traefik.http.middlewares.https-redirect-scheme.redirectscheme.scheme=https"
+        - "traefik.http.routers.ci-router.entrypoints=http,https"
+        - "traefik.http.routers.ci-router.rule=Host(`ci.abitmoredepth.com`)"
+        - "traefik.http.routers.ci-router.tls.certResolver=default"
+        - "traefik.http.services.ci-service.loadbalancer.server.port=8080"
 
   ghost:
     image: ghost:latest
@@ -58,12 +58,12 @@ services:
       restart_policy:
         condition: any
       labels:
-        - "traefik.backend=ghost"
         - "traefik.enable=true"
-        - "traefik.frontend.entryPoints=http,https"
-        - "traefik.frontend.redirect.entryPoint=https"
-        - "traefik.frontend.rule=Host:www.abitmoredepth.com,abitmoredepth.com"
-        - "traefik.port=2368"
+        - "traefik.http.middlewares.https-redirect-scheme.redirectscheme.scheme=https"
+        - "traefik.http.routers.ghost-router.entrypoints=http,https"
+        - "traefik.http.routers.ghost-router.rule=Host(`www.abitmoredepth.com`) || Host(`abitmoredepth.com`)"
+        - "traefik.http.routers.ghost-router.tls.certResolver=default"
+        - "traefik.http.services.ghost-service.loadbalancer.server.port=2368"
 
   mariadb:
     image: mariadb:5
@@ -99,75 +99,73 @@ services:
       restart_policy:
         condition: any
       labels:
-        - "traefik.backend=portainer"
         - "traefik.enable=true"
-        - "traefik.frontend.entryPoints=http,https"
-        - "traefik.frontend.redirect.entryPoint=https"
-        - "traefik.frontend.rule=Host:manage.abitmoredepth.com"
-        - "traefik.port=9000"
+        - "traefik.http.middlewares.https-redirect-scheme.redirectscheme.scheme=https"
+        - "traefik.http.routers.portainer-router.entrypoints=http,https"
+        - "traefik.http.routers.portainer-router.rule=Host(`manage.abitmoredepth.com`)"
+        - "traefik.http.routers.portainer-router.tls.certResolver=default"
+        - "traefik.http.services.portainer-service.loadbalancer.server.port=9000"
 
-  registry:
-    image: registry:2
-    volumes:
-      - type: volume
-        source: reg-data
-        target: /var/lib/registry
-      - type: bind
-        source: ./registry/reg-config.yaml
-        target: /etc/docker/registry/config.yml
-    networks:
-      - abitmoredepth
-    deploy:
-      mode: replicated
-      replicas: 1
-      restart_policy:
-        condition: any
-      labels:
-        - "traefik.backend=registry"
-        - "traefik.enable=true"
-        - "traefik.frontend.entryPoints=http,https"
-        - "traefik.frontend.passHostHeader=true"
-        - "traefik.frontend.redirect.entrypoint=https"
-        - "traefik.frontend.rule=Host:registry.abitmoredepth.com"
-        - "traefik.port=5000"
+  # registry:
+  #   image: registry:2
+  #   volumes:
+  #     - type: volume
+  #       source: reg-data
+  #       target: /var/lib/registry
+  #     - type: bind
+  #       source: ./registry/reg-config.yaml
+  #       target: /etc/docker/registry/config.yml
+  #   networks:
+  #     - abitmoredepth
+  #   deploy:
+  #     mode: replicated
+  #     replicas: 1
+  #     restart_policy:
+  #       condition: any
+  #     labels:
+  #       - "traefik.backend=registry"
+  #       - "traefik.enable=true"
+  #       - "traefik.frontend.entryPoints=http,https"
+  #       - "traefik.frontend.passHostHeader=true"
+  #       - "traefik.frontend.redirect.entrypoint=https"
+  #       - "traefik.frontend.rule=Host:registry.abitmoredepth.com"
+  #       - "traefik.port=5000"
 
-  regUI:
-    image: konradkleine/docker-registry-frontend:v2
-    environment:
-      - ENV_DOCKER_REGISTRY_HOST=registry
-      - ENV_DOCKER_REGISTRY_PORT=5000
-      - ENV_DOCKER_REGISTRY_USE_SSL=0
-      - ENV_MODE_BROWSE_ONLY=false
-    depends_on:
-      - registry
-    networks:
-      - abitmoredepth
-    deploy:
-      mode: replicated
-      replicas: 1
-      restart_policy:
-        condition: any
-      labels:
-        - "traefik.backend=docker-registry-ui"
-        - "traefik.enable=true"
-        - "traefik.frontend.entryPoints=http,https"
-        - "traefik.frontend.redirect.entryPoint=https"
-        - "traefik.frontend.rule=Host:reg-ui.abitmoredepth.com"
-        - "traefik.port=80"
+  # regUI:
+  #   image: konradkleine/docker-registry-frontend:v2
+  #   environment:
+  #     - ENV_DOCKER_REGISTRY_HOST=registry
+  #     - ENV_DOCKER_REGISTRY_PORT=5000
+  #     - ENV_DOCKER_REGISTRY_USE_SSL=0
+  #     - ENV_MODE_BROWSE_ONLY=false
+  #   depends_on:
+  #     - registry
+  #   networks:
+  #     - abitmoredepth
+  #   deploy:
+  #     mode: replicated
+  #     replicas: 1
+  #     restart_policy:
+  #       condition: any
+  #     labels:
+  #       - "traefik.backend=docker-registry-ui"
+  #       - "traefik.enable=true"
+  #       - "traefik.frontend.entryPoints=http,https"
+  #       - "traefik.frontend.redirect.entryPoint=https"
+  #       - "traefik.frontend.rule=Host:reg-ui.abitmoredepth.com"
+  #       - "traefik.port=80"
 
   traefik:
-    image: traefik
-    build:
-      context: traefik/
-      dockerfile: Dockerfile
+    image: traefik:latest
     ports:
       - "443:443"
       - "8080:8080"
       - "80:80"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./traefik/traefik.toml:/traefik.toml
+      - ./traefik/traefik.yaml:/traefik.yaml
       - ./traefik/certs:/etc/traefik/acme/
+      - ./traefik/auth:/etc/traefik/auth
     networks:
       - abitmoredepth
     deploy:
@@ -176,12 +174,16 @@ services:
       restart_policy:
         condition: any
       labels:
-        - "traefik.backend=traefik"
         - "traefik.enable=true"
-        - "traefik.frontend.entryPoints=http,https"
-        - "traefik.frontend.redirect.entryPoint=https"
-        - "traefik.frontend.rule=Host:traefik.abitmoredepth.com"
-        - "traefik.port=8080"
+        - "traefik.http.middlewares.traefik-auth.digestauth.usersfile=/etc/traefik/auth"
+        - "traefik.http.middlewares.https-redirect-scheme.redirectscheme.scheme=https"
+        - "traefik.http.routers.traefik-router.entrypoints=http,https"
+        - "traefik.http.routers.traefik-router.middlewares=traefik-auth"
+        - "traefik.http.routers.traefik-router.rule=Host(`traefik.abitmoredepth.com`)"
+        - "traefik.http.routers.traefik-router.service=api@internal"
+        - "traefik.http.routers.traefik-router.tls.certResolver=default"
+        # Dummy service for Swarm port detection. The port can be any valid integer value.
+        - "traefik.http.services.traefik-service.loadbalancer.server.port=9999"
 
 volumes:
   ghost_content:
