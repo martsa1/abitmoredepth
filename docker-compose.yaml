@@ -61,7 +61,7 @@ services:
       - main
     deploy:
       mode: replicated
-      replicas: 1
+      replicas: 0
       restart_policy:
         condition: any
       placement:
@@ -89,7 +89,7 @@ services:
       - main
     deploy:
       mode: replicated
-      replicas: 1
+      replicas: 0
       restart_policy:
         condition: any
       placement:

@@ -7,11 +7,9 @@
   tasks:
     - name: "Build containers"
       command: "docker-compose build"
-      become: true  # Remove this once I can build without needing root...
 
     - name: "Push containers"
       command: "docker-compose push"
-      become: true  # Remove this once I can build without needing root...
 
 - hosts: "abmd-root"
   remote_user: root
