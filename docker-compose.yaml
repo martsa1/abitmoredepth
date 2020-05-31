@@ -257,4 +257,4 @@ secrets:
   ci-password:
     file: ./jenkins/master/secret-password
   traefik-auth:
-    file: ./traefik/auth
+    file: ./traefik/secret-traefik-auth
