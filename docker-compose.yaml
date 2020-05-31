@@ -96,6 +96,58 @@ services:
         constraints:
           - node.role == manager
 
+
+  db:
+    image: postgres:11-alpine
+    environment:
+      POSTGRES_DB: "wiki"
+      POSTGRES_PASSWORD: "Holyfeckthisisoneofthosereallydamnablylongrootpasswords!!"
+      POSTGRES_USER: "wikijs"
+    networks:
+      - main
+    logging:
+      driver: "none"
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.role == manager
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  wiki:
+    image: requarks/wiki:2
+    depends_on:
+      - db
+    environment:
+      DB_TYPE: postgres
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: "wikijs"
+      DB_PASS: "Holyfeckthisisoneofthosereallydamnablylongrootpasswords!!"
+      DB_NAME: wiki
+    networks:
+      - main
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.role == manager
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=abitmoredepth_main"
+        - "traefik.http.middlewares.https-redirect-scheme.redirectscheme.scheme=https"
+        - "traefik.http.routers.wiki-router.entrypoints=http,https"
+        - "traefik.http.routers.wiki-router.rule=Host(`www.abitmoredepth.com`) || Host(`abitmoredepth.com`)"
+        - "traefik.http.routers.wiki-router.tls.certResolver=default"
+        - "traefik.http.services.wiki-service.loadbalancer.server.port=3000"
+
   portainer:
     image: portainer/portainer
     volumes:
@@ -238,6 +290,8 @@ services:
         - "traefik.http.services.traefik-service.loadbalancer.server.port=9999"
 
 volumes:
+  db-data:
+
   ghost_content:
 
   ghost_source:
