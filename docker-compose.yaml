@@ -202,9 +202,15 @@ services:
       - "8080:8080"
       - "80:80"
     volumes:
+      # Docker socket
       - /var/run/docker.sock:/var/run/docker.sock
+
+      # Traefik base config.
       - ./traefik/traefik.yaml:/traefik.yaml
-      - ./traefik/certs:/etc/traefik/acme/
+
+      # ACME data
+      - traefik_certs:/etc/traefik/acme/
+      # - ./traefik/certs:/etc/traefik/acme/
       # - ./traefik/auth:/etc/traefik/auth
     networks:
       - main
@@ -241,6 +247,8 @@ volumes:
   portainer-data:
 
   reg-data:
+
+  traefik_certs:
 
 networks:
   portainer_agent:

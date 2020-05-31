@@ -1,0 +1,66 @@
+# vim: se filetype=yaml.ansible
+---
+
+- hosts: "localhost"
+  connection: local
+
+  tasks:
+    - name: "Build containers"
+      command: "docker-compose build"
+      become: true  # Remove this once I can build without needing root...
+
+    - name: "Push containers"
+      command: "docker-compose push"
+      become: true  # Remove this once I can build without needing root...
+
+- hosts: "abmd-root"
+  remote_user: root
+  vars:
+    repo_base: "/opt/abitmoredepth"
+
+  tasks:
+    - name: "Ensure container environment exists."
+      file:
+        path: "{{item}}"
+        state: directory
+      with_items:
+        - "{{repo_base}}"
+        - "{{repo_base}}/jenkins/master"
+        - "{{repo_base}}/jenkins/agent"
+        - "{{repo_base}}/traefik"
+        - "{{repo_base}}/ghost"
+
+        # CI job state - move to volume?
+        - "{{ repo_base }}/ci/jobs"
+        - "{{ repo_base }}/ci/workspace"
+
+    - name: "Push key files to server"
+      copy:
+        src: "{{ item[0] }}"
+        dest: "{{repo_base}}/{{ item[1] }}"
+      with_items:
+        - [[ "docker-compose.yaml", "docker-compose.yaml" ]]
+        - [[ "traefik/traefik.yaml", "traefik/traefik.yaml" ]]
+        - [[ "ghost/config.production.json", "ghost/config.production.json" ]]
+
+        # - [[ "jenkins/master/Dockerfile", "jenkins/master/Dockerfile" ]]
+
+    - name: "Pull latest images from Registry"
+      command: "docker-compose pull"
+      args:
+        chdir: "{{repo_base}}"
+
+    - name: "Set secrets for prod use."
+      copy:
+        src: "secrets/{{ item[0] }}"
+        dest: "{{ repo_base }}/{{ item[1] }}"
+      with_items:
+        - [[ "ci-password", "jenkins/master/secret-password" ]]
+        - [[ "ci-user", "jenkins/master/secret-user" ]]
+        - [[ "traefik-auth", "traefik/secret-traefik-auth" ]]
+
+    - name: "Deploy/Update the stack."
+      command: "docker stack deploy -c docker-compose.yaml abitmoredepth"
+      args:
+        chdir: "{{ repo_base }}"
+
