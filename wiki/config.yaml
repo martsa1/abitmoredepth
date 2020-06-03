@@ -1,0 +1,39 @@
+---
+# Settings build by default into the dockerfile
+port: 3000
+bindIP: 0.0.0.0
+
+db:
+  type: $(DB_TYPE)
+  host: $(DB_HOST)
+  port: $(DB_PORT)
+  user: $(DB_USER)
+  pass: $(DB_PASS)
+  db: $(DB_NAME)
+  storage: $(DB_FILEPATH)
+  ssl: $(DB_SSL)
+
+ssl:
+  enabled: false
+  # port: 3443
+  # provider: letsencrypt
+  # domain: $(LETSENCRYPT_DOMAIN)
+  # subscriberEmail: $(LETSENCRYPT_EMAIL)
+
+logLevel: verbose
+ha: $(HA_ACTIVE)
+
+
+# Custom settings
+git:
+  url: git@github.com:ABitMoreDepth/wiki.git
+  branch: master
+
+  auth:
+    type: ssh
+    privateKey: /run/secrets/wiki-key
+    sslVerify: true
+
+  # Default email for commit author:
+  serverEmail: sam@abitmoredepth.com
+  showUserEmail: true

@@ -27,6 +27,7 @@
         - "{{repo_base}}/jenkins/agent"
         - "{{repo_base}}/traefik"
         - "{{repo_base}}/ghost"
+        - "{{repo_base}}/wiki"
 
         # CI job state - move to volume?
         - "{{ repo_base }}/ci/jobs"
@@ -40,6 +41,7 @@
         - [[ "docker-compose.yaml", "docker-compose.yaml" ]]
         - [[ "traefik/traefik.yaml", "traefik/traefik.yaml" ]]
         - [[ "ghost/config.production.json", "ghost/config.production.json" ]]
+        - [[ "wiki/config.yaml", "wiki/config.yaml" ]]
 
         # - [[ "jenkins/master/Dockerfile", "jenkins/master/Dockerfile" ]]
 
@@ -56,6 +58,7 @@
         - [[ "ci-password", "jenkins/master/secret-password" ]]
         - [[ "ci-user", "jenkins/master/secret-user" ]]
         - [[ "traefik-auth", "traefik/secret-traefik-auth" ]]
+        - [[ "wiki-key", "wiki/secret-wiki-ssh-key" ]]
 
     - name: "Deploy/Update the stack."
       command: "docker stack deploy -c docker-compose.yaml abitmoredepth"

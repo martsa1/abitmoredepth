@@ -129,6 +129,12 @@ services:
       DB_USER: "wikijs"
       DB_PASS: "Holyfeckthisisoneofthosereallydamnablylongrootpasswords!!"
       DB_NAME: wiki
+    volumes:
+      - "./wiki/config.yaml:/wiki/config.yml"
+    secrets:
+      - source: wiki-key
+        target: wiki-key
+        uid: "1000"
     networks:
       - main
     deploy:
@@ -143,6 +149,7 @@ services:
         - "traefik.enable=true"
         - "traefik.docker.network=abitmoredepth_main"
         - "traefik.http.middlewares.https-redirect-scheme.redirectscheme.scheme=https"
+        - "traefik.http.routers.wiki-router.middlewares=https-redirect-scheme"
         - "traefik.http.routers.wiki-router.entrypoints=http,https"
         - "traefik.http.routers.wiki-router.rule=Host(`www.abitmoredepth.com`) || Host(`abitmoredepth.com`)"
         - "traefik.http.routers.wiki-router.tls.certResolver=default"
@@ -320,3 +327,5 @@ secrets:
     file: ./jenkins/master/secret-password
   traefik-auth:
     file: ./traefik/secret-traefik-auth
+  wiki-key:
+    file: ./wiki/secret-wiki-ssh-key
