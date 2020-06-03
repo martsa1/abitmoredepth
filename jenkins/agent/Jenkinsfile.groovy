@@ -24,7 +24,7 @@ pipeline {
       steps {
         script {
           dir('jenkins/agent') {
-            docker.build('registry.abitmoredepth.com/ci-agent', '--pull --no-cache .')
+            docker.build('114151591996.dkr.ecr.eu-west-1.amazonaws.com/abmd/ci-agent', '--pull --no-cache .')
           }
         }
       }
@@ -34,8 +34,8 @@ pipeline {
       steps {
         script {
           dir('jenkins/agent') {
-            docker.withRegistry('https://registry.abitmoredepth.com') {
-              docker.image('registry.abitmoredepth.com/ci-agent:latest').push('latest')
+            docker.withRegistry('114151591996.dkr.ecr.eu-west-1.amazonaws.com/abmd') {
+              docker.image('114151591996.dkr.ecr.eu-west-1.amazonaws.com/abmd/ci-agent:latest').push('latest')
             }
           }
         }

@@ -4,12 +4,12 @@
 def jenkins_image_builders = [
   [
     'jobName': 'jenkins-agent',
-    'jobDescription': 'Build and Publish the Jenkins Slave Agent to registry.abitmoredepth.com',
+    'jobDescription': 'Build and Publish the Jenkins Slave Agent to ECR',
     'jenkinsFilePath': 'jenkins/agent/Jenkinsfile.groovy'
   ],
   [
     'jobName': 'jenkins-master',
-    'jobDescription': 'Build and Publish the Jenkins docker image to registry.abitmoredepth.com',
+    'jobDescription': 'Build and Publish the Jenkins docker image to ECR',
     'jenkinsFilePath': 'jenkins/master/Jenkinsfile.groovy'
   ],
   [

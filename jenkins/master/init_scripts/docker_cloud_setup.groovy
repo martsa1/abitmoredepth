@@ -15,7 +15,7 @@ import jenkins.model.Jenkins
 
 // Defines base docker container template & associated settings
 // https://github.com/jenkinsci/docker-plugin/blob/docker-plugin-1.1.2/src/main/java/com/nirima/jenkins/plugins/docker/DockerTemplateBase.java
-DockerTemplateBase dockerTemplateBase = new DockerTemplateBase('registry.abitmoredepth.com/ci-agent:latest')
+DockerTemplateBase dockerTemplateBase = new DockerTemplateBase('114151591996.dkr.ecr.eu-west-1.amazonaws.com/abmd/ci-agent:latest')
 
 // Setup docker template base parameters
 dockerTemplateBase.setBindAllPorts(false)

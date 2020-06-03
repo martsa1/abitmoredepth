@@ -1,7 +1,7 @@
 pipeline {
   agent {
     docker {
-      image 'registry.abitmoredepth.com/ci-agent'
+      image '114151591996.dkr.ecr.eu-west-1.amazonaws.com/abmd/ci-agent'
       label 'docker'
     }
   }
@@ -24,7 +24,7 @@ pipeline {
       steps {
         script {
           dir('traefik') {
-            docker.build('registry.abitmoredepth.com/traefik', '--pull --no-cache .')
+            docker.build('114151591996.dkr.ecr.eu-west-1.amazonaws.com/traefik', '--pull --no-cache .')
           }
         }
       }
@@ -34,8 +34,8 @@ pipeline {
       steps {
         script {
           dir('traefik') {
-            docker.withRegistry('https://registry.abitmoredepth.com') {
-              docker.image('registry.abitmoredepth.com/traefik').push('latest')
+            docker.withRegistry('114151591996.dkr.ecr.eu-west-1.amazonaws.com/traefik') {
+              docker.image('114151591996.dkr.ecr.eu-west-1.amazonaws.com/traefik').push('latest')
             }
           }
         }
