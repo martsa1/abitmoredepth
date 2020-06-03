@@ -148,11 +148,36 @@ services:
       labels:
         - "traefik.enable=true"
         - "traefik.docker.network=abitmoredepth_main"
-        - "traefik.http.middlewares.https-redirect-scheme.redirectscheme.scheme=https"
-        - "traefik.http.routers.wiki-router.middlewares=https-redirect-scheme"
-        - "traefik.http.routers.wiki-router.entrypoints=http,https"
-        - "traefik.http.routers.wiki-router.rule=Host(`www.abitmoredepth.com`) || Host(`abitmoredepth.com`)"
+
+          # setup HTTP - HTTP redirect middleware
+        - "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
+
+          # Setup HTTP entrypoint
+        - "traefik.http.routers.wiki-http-router.rule=Host(`www.abitmoredepth.com`, `abitmoredepth.com`)"
+        - "traefik.http.routers.wiki-http-router.entrypoints=http"
+          # Bind the HTTP to HTTPS redirect scheme to this router
+        - "traefik.http.routers.wiki-http-router.middlewares=https-redirect"
+
+
+          # Setup redirect from www. to abitmoredepth.com
+        - "traefik.http.middlewares.wiki-www-redirect.redirectregex.regex=^.*www.abitmoredepth.com/(.*)"
+        - "traefik.http.middlewares.wiki-www-redirect.redirectregex.replacement=https://abitmoredepth.com/$${1}"
+
+          # We support www.abitmoredepth.com as well, but we re-direct this to the primary FQDN below.
+        - "traefik.http.routers.www-wiki-router.rule=Host(`www.abitmoredepth.com`)"
+        - "traefik.http.routers.www-wiki-router.middlewares=wiki-www-redirect"
+        - "traefik.http.routers.www-wiki-router.entrypoints=https"
+          # Register the www wiki router for LetsEncrypt
+        - "traefik.http.routers.www-wiki-router.tls.certResolver=default"
+
+          # The primary host to serve from
+        - "traefik.http.routers.wiki-router.rule=Host(`abitmoredepth.com`)"
+          # Pickup the site on either HTTP or HTTPS
+        - "traefik.http.routers.wiki-router.entrypoints=https"
+          # Register the HTTPS wiki router for LetsEncrypt
         - "traefik.http.routers.wiki-router.tls.certResolver=default"
+
+          # Define the backend
         - "traefik.http.services.wiki-service.loadbalancer.server.port=3000"
 
   portainer:
@@ -237,13 +262,17 @@ services:
       labels:
         - "traefik.enable=true"
         - "traefik.docker.network=abitmoredepth_main"
+
         - "traefik.http.middlewares.traefik-auth.digestauth.usersfile=/run/secrets/traefik-auth"
         - "traefik.http.middlewares.https-redirect-scheme.redirectscheme.scheme=https"
+
         - "traefik.http.routers.traefik-router.entrypoints=http,https"
-        - "traefik.http.routers.traefik-router.middlewares=traefik-auth"
+        - "traefik.http.routers.traefik-router.middlewares=traefik-auth,https-redirect-scheme"
+
         - "traefik.http.routers.traefik-router.rule=Host(`traefik.abitmoredepth.com`)"
         - "traefik.http.routers.traefik-router.service=api@internal"
         - "traefik.http.routers.traefik-router.tls.certResolver=default"
+
         # Dummy service for Swarm port detection. The port can be any valid integer value.
         - "traefik.http.services.traefik-service.loadbalancer.server.port=9999"
 

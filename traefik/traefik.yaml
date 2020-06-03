@@ -2,14 +2,15 @@
 global:
   # Allow traefik to collect usage data.
   sendAnonymousUsage: true
+  checkNewVersion: true
 
 # Provide access from both HTTP & HTTPS
 entrypoints:
   http:
-    address: :80
+    address: ":80"
 
   https:
-    address: :443
+    address: ":443"
 
 log:
   level: INFO
@@ -18,8 +19,6 @@ log:
 
 api:
   dashboard: true
-  # TODO - Replace this with auth middleware on this route.
-  insecure: false
 
 # We use docker swarm to handle our services, so use that as a provider
 providers:
