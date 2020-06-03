@@ -205,55 +205,6 @@ services:
         constraints:
           - node.platform.os == linux
 
-  # registry:
-  #   image: registry:2
-  #   volumes:
-  #     - type: volume
-  #       source: reg-data
-  #       target: /var/lib/registry
-  #     - type: bind
-  #       source: ./registry/reg-config.yaml
-  #       target: /etc/docker/registry/config.yml
-  #   networks:
-  #     - abitmoredepth
-  #   deploy:
-  #     mode: replicated
-  #     replicas: 1
-  #     restart_policy:
-  #       condition: any
-  #     labels:
-  #       - "traefik.backend=registry"
-  #       - "traefik.enable=true"
-  #       - "traefik.frontend.entryPoints=http,https"
-  #       - "traefik.frontend.passHostHeader=true"
-  #       - "traefik.frontend.redirect.entrypoint=https"
-  #       - "traefik.frontend.rule=Host:registry.abitmoredepth.com"
-  #       - "traefik.port=5000"
-
-  # regUI:
-  #   image: konradkleine/docker-registry-frontend:v2
-  #   environment:
-  #     - ENV_DOCKER_REGISTRY_HOST=registry
-  #     - ENV_DOCKER_REGISTRY_PORT=5000
-  #     - ENV_DOCKER_REGISTRY_USE_SSL=0
-  #     - ENV_MODE_BROWSE_ONLY=false
-  #   depends_on:
-  #     - registry
-  #   networks:
-  #     - abitmoredepth
-  #   deploy:
-  #     mode: replicated
-  #     replicas: 1
-  #     restart_policy:
-  #       condition: any
-  #     labels:
-  #       - "traefik.backend=docker-registry-ui"
-  #       - "traefik.enable=true"
-  #       - "traefik.frontend.entryPoints=http,https"
-  #       - "traefik.frontend.redirect.entryPoint=https"
-  #       - "traefik.frontend.rule=Host:reg-ui.abitmoredepth.com"
-  #       - "traefik.port=80"
-
   traefik:
     image: traefik:latest
     ports:
