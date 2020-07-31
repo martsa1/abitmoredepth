@@ -178,6 +178,9 @@ services:
           # Register the HTTPS wiki router for LetsEncrypt
         - "traefik.http.routers.wiki-router.tls.certResolver=default"
 
+          # Setup TLS domain for LetsEncrypt
+        - "traefik.http.routers.wiki-router.tls.domains[0].main=abitmoredepth.com"
+
           # Define the backend
         - "traefik.http.services.wiki-service.loadbalancer.server.port=3000"
 
