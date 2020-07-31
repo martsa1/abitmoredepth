@@ -135,6 +135,7 @@ services:
       - source: wiki-key
         target: wiki-key
         uid: "1000"
+        mode: 0400
     networks:
       - main
     deploy:
